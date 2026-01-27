@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication
 
-from app.view.main_window import MainWindow
+from app.view.MainWindow import MainWindow
 from app.common.config import cfg
 
 import matplotlib

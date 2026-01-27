@@ -1,4 +1,3 @@
-# coding:utf-8
 import sys
 
 from PyQt5.QtCore import Qt, QUrl
@@ -11,7 +10,9 @@ from qfluentwidgets import FluentIcon as FIF
 
 from .BinominalDistribution import BinominalDistribution
 from .EmpiricalDistribution import EmpiricalDistribution
-from .settings import SettingsInterface
+from .PoissonDistribution import PoissonDistribution
+from .PoissonTheorem import PoissonTheorem
+from .Settings import SettingsInterface
 
 class Widget(QWidget):
     def __init__(self, text: str, parent=None):
@@ -32,8 +33,8 @@ class MainWindow(FluentWindow):
         self.homeInterface = Widget('导航', self)
         self.empirical_distribution = EmpiricalDistribution(self)
         self.binomial_distribution = BinominalDistribution(self)
-        self.poisson_distribution = Widget('泊松分布', self)
-        self.poisson_theorem = Widget('泊松定理', self)
+        self.poisson_distribution = PoissonDistribution(self)
+        self.poisson_theorem = PoissonTheorem(self)
         self.central_limit_theorem = Widget('中心极限定理', self)
         self.consistency_of_point_estimation = Widget('点估计的相合性', self)
         self.two_types_of_errors = Widget('假设检验两类错误', self)
@@ -71,7 +72,7 @@ class MainWindow(FluentWindow):
         #     position=NavigationItemPosition.BOTTOM,
         # )
 
-        self.addSubInterface(self.settings, FIF.SETTING, 'Settings', NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.settings, FIF.SETTING, '设置', NavigationItemPosition.BOTTOM)
 
         # add badge to navigation item
         # item = self.navigationInterface.widget(self.binomial_distribution.objectName())

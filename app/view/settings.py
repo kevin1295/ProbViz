@@ -33,8 +33,8 @@ class SettingsInterface(ScrollArea):
         self.frameInfo = HyperlinkCard(
             url="https://qfluentwidgets.com",
             text="关于 PyQt-Fluent-Widgets",
-            icon=FluentIcon.HELP,
-            title="鸣谢",
+            icon=FluentIcon.CAFE,
+            title="鸣谢 PyQt-Fluent-Widgets",
             content="发现 PyQt-Fluent-Widgets 的最佳实践",
             parent=self.infoGroup
         )
@@ -52,11 +52,11 @@ class SettingsInterface(ScrollArea):
         self.zoomCard = OptionsSettingCard(
             cfg.dpiScale,
             FluentIcon.ZOOM,
-            self.tr("Interface zoom"),
-            self.tr("Change the size of widgets and fonts"),
+            "界面缩放",
+            "调整控件和字体的大小",
             texts=[
                 "100%", "125%", "150%", "175%", "200%",
-                self.tr("Use system setting")
+                "应用系统设置"
             ],
             parent=self.personalGroup
         )
