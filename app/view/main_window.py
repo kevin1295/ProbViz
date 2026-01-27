@@ -9,7 +9,8 @@ from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
                             InfoBadgePosition, FluentBackgroundTheme)
 from qfluentwidgets import FluentIcon as FIF
 
-from app.view.ExpWidget import expWidget
+from .BinominalDistribution import BinominalDistribution
+from .EmpiricalDistribution import EmpiricalDistribution
 
 class Widget(QWidget):
     def __init__(self, text: str, parent=None):
@@ -27,8 +28,8 @@ class MainWindow(FluentWindow):
         super().__init__()
 
         self.homeInterface = Widget('导航', self)
-        self.empirical_distribution = expWidget('经验分布', parent=self)
-        self.binomial_distribution = Widget('二项分布', self)
+        self.empirical_distribution = EmpiricalDistribution(self)
+        self.binomial_distribution = BinominalDistribution(self)
         self.poisson_distribution = Widget('泊松分布', self)
         self.poisson_theorem = Widget('泊松定理', self)
         self.central_limit_theorem = Widget('中心极限定理', self)
@@ -61,12 +62,12 @@ class MainWindow(FluentWindow):
 
         self.navigationInterface.addSeparator()
         # add custom widget to bottom
-        self.navigationInterface.addWidget(
-            routeKey='avatar',
-            widget=NavigationAvatarWidget('zhiyiYo', 'resource/shoko.png'),
-            onClick=self.showMessageBox,
-            position=NavigationItemPosition.BOTTOM,
-        )
+        # self.navigationInterface.addWidget(
+        #     routeKey='avatar',
+        #     widget=NavigationAvatarWidget('zhiyiYo', 'resource/shoko.png'),
+        #     onClick=self.showMessageBox,
+        #     position=NavigationItemPosition.BOTTOM,
+        # )
 
         self.addSubInterface(self.settings, FIF.SETTING, 'Settings', NavigationItemPosition.BOTTOM)
 

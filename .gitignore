@@ -1,2 +1,3 @@
 .venv/
+.venv64/
 __pycache__/

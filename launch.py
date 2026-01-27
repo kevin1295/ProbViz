@@ -8,6 +8,11 @@ from PyQt5.QtWidgets import QApplication
 from app.common.config import cfg
 from app.view.main_window import MainWindow
 
+import matplotlib
+# add Chinese font support for matplotlib
+matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
+
 # enable dpi scale
 if cfg.get(cfg.dpiScale) == "Auto":
     QApplication.setHighDpiScaleFactorRoundingPolicy(

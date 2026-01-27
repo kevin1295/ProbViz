@@ -34,9 +34,9 @@ class expWidget(QWidget):
         
         qrouter.setDefaultRouteKey(self.stackedWidget, self.descriptionInterface.objectName())
         
-    def addSubInterface(self, widget: QLabel, objectName, text):
+    def addSubInterface(self, widget, objectName, text):
         widget.setObjectName(objectName)
-        widget.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        # widget.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.stackedWidget.addWidget(widget)
         self.pivot.addItem(
             routeKey=objectName,
