@@ -11,6 +11,7 @@ from qfluentwidgets import FluentIcon as FIF
 
 from .BinominalDistribution import BinominalDistribution
 from .EmpiricalDistribution import EmpiricalDistribution
+from .settings import SettingsInterface
 
 class Widget(QWidget):
     def __init__(self, text: str, parent=None):
@@ -26,7 +27,8 @@ class Widget(QWidget):
 class MainWindow(FluentWindow):
     def __init__(self):
         super().__init__()
-
+        self.setMicaEffectEnabled(False) # disable mica effect for webengineview transparency issue
+        
         self.homeInterface = Widget('导航', self)
         self.empirical_distribution = EmpiricalDistribution(self)
         self.binomial_distribution = BinominalDistribution(self)
@@ -40,7 +42,7 @@ class MainWindow(FluentWindow):
         self.coin_tossing_experiment = Widget('投币实验', self)
         self.continuous_pdf = Widget('连续型随机变量概率分布', self)
         self.discrete_pdf = Widget('离散型随机变量概率分布', self)
-        self.settings = Widget('设置', self)
+        self.settings = SettingsInterface(self)
 
         self.initNavigation()
         self.initWindow()
@@ -116,9 +118,7 @@ if __name__ == '__main__':
     QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-
-    setTheme(Theme.AUTO)
-
+    
     app = QApplication(sys.argv)
     w = MainWindow()
     w.show()
