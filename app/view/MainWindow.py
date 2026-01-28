@@ -4,15 +4,23 @@ from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, FluentWindow,
-                            NavigationAvatarWidget, qrouter, SubtitleLabel, setFont, InfoBadge,
-                            InfoBadgePosition, FluentBackgroundTheme)
+                            qrouter, SubtitleLabel, setFont, InfoBadge, FluentStyleSheet)
 from qfluentwidgets import FluentIcon as FIF
 
+from .ExpWidget import ExpWidget
+from .Home import HomeInterface, signalBus
 from .BinominalDistribution import BinominalDistribution
-from .EmpiricalDistribution import EmpiricalDistribution
+from .DiceRollingExperiment import DiceRollingExperiment
 from .PoissonDistribution import PoissonDistribution
 from .PoissonTheorem import PoissonTheorem
 from .CentralLimitTheorem import CentralLimitTheorem
+from .ConsistencyOfPointEstimation import ConsistencyOfPointEstimation
+from .TwoTypesOfErrors import TwoTypesOfErrors
+from .OneDimNorm import OneDimNorm
+from .TwoDimNorm import TwoDimNorm
+from .CoinTossingExperiment import CoinTossingExperiment
+from .DiscretePDF import DiscretePDF
+from .ContinuousPDF import ContinuousPDF
 from .Settings import SettingsInterface
 
 class Widget(QWidget):
@@ -31,24 +39,26 @@ class MainWindow(FluentWindow):
         super().__init__()
         self.setMicaEffectEnabled(False)
         
+        FluentStyleSheet.FLUENT_WINDOW.apply(self)
+        
         # 只初始化必需的界面（主页和设置）
-        self.homeInterface = Widget('导航', self)
+        self.homeInterface = HomeInterface(self)
         self.settings = SettingsInterface(self)
         
         # 定义其他界面的工厂函数
         self.interface_factories = {
-            'empirical_distribution': lambda: EmpiricalDistribution(self),
             'binomial_distribution': lambda: BinominalDistribution(self),
             'poisson_distribution': lambda: PoissonDistribution(self),
             'poisson_theorem': lambda: PoissonTheorem(self),
             'central_limit_theorem': lambda: CentralLimitTheorem(self),
-            'consistency_of_point_estimation': lambda: Widget('点估计的相合性', self),
-            'two_types_of_errors': lambda: Widget('假设检验两类错误', self),
-            'one_dim_norm': lambda: Widget('一维正态曲线', self),
-            'two_dim_norm': lambda: Widget('二维正态曲线', self),
-            'coin_tossing_experiment': lambda: Widget('投币实验', self),
-            'continuous_pdf': lambda: Widget('连续型随机变量概率分布', self),
-            'discrete_pdf': lambda: Widget('离散型随机变量概率分布', self),
+            'consistency_of_point_estimation': lambda: ConsistencyOfPointEstimation(self),
+            'two_types_of_errors': lambda: TwoTypesOfErrors(self),
+            'one_dim_norm': lambda: OneDimNorm(self),
+            'two_dim_norm': lambda: TwoDimNorm(self),
+            'dice_rolling_experiment': lambda: DiceRollingExperiment(self),
+            'coin_tossing_experiment': lambda: CoinTossingExperiment(self),
+            'continuous_pdf': lambda: ContinuousPDF(self),
+            'discrete_pdf': lambda: DiscretePDF(self),
         }
         
         # 存储已创建的界面
@@ -64,7 +74,6 @@ class MainWindow(FluentWindow):
         """获取现有界面或创建新界面（懒加载）"""
         if key not in self.created_interfaces:
             self.created_interfaces[key] = self.interface_factories[key]()
-            # 将新创建的界面添加到堆叠小部件
             self.stackedWidget.addWidget(self.created_interfaces[key])
         return self.created_interfaces[key]
 
@@ -73,7 +82,6 @@ class MainWindow(FluentWindow):
         self.addSubInterface(self.homeInterface, FIF.HOME, '导航')
         
         # 为其他界面创建懒加载代理
-        self.addLazySubInterface('empirical_distribution', FIF.ALBUM, '经验分布')
         self.addLazySubInterface('binomial_distribution', FIF.ALBUM, '二项分布')
         self.addLazySubInterface('poisson_distribution', FIF.ALBUM, '泊松分布')
         self.addLazySubInterface('poisson_theorem', FIF.ALBUM, '泊松定理')
@@ -82,13 +90,21 @@ class MainWindow(FluentWindow):
         self.addLazySubInterface('two_types_of_errors', FIF.ALBUM, '假设检验两类错误')
         self.addLazySubInterface('one_dim_norm', FIF.ALBUM, '一维正态曲线')
         self.addLazySubInterface('two_dim_norm', FIF.ALBUM, '二维正态曲线')
+        self.addLazySubInterface('dice_rolling_experiment', FIF.ALBUM, '掷骰子实验')
         self.addLazySubInterface('coin_tossing_experiment', FIF.ALBUM, '投币实验')
         self.addLazySubInterface('continuous_pdf', FIF.ALBUM, '连续型随机变量概率分布')
         self.addLazySubInterface('discrete_pdf', FIF.ALBUM, '离散型随机变量概率分布')
 
         self.navigationInterface.addSeparator()
         self.addSubInterface(self.settings, FIF.SETTING, '设置', NavigationItemPosition.BOTTOM)
+        
+        signalBus.switchToSampleCard.connect(self.switchToInterface)
 
+    def switchToInterface(self, routeKey, index):
+        self.stackedWidget.setCurrentWidget(self.getOrCreateInterface(routeKey))
+        self.navigationInterface.setCurrentItem(routeKey)
+        
+    
     def addLazySubInterface(self, key, icon, text):
         """添加懒加载子界面"""
         def load_and_show():

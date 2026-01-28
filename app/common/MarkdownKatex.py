@@ -149,6 +149,20 @@ class MarkdownKaTeXWidget(QWidget):
                     font-size: {self._current_font_size * 1.1}px !important;  /* 公式略大于正文，保持可读性，跟随当前字体大小 */
                     color: {font_color} !important;  /* 公式跟随主题颜色 */
                 }}
+                table {{
+                    border-collapse: collapse;
+                    border: 2px solid {font_color};
+                    width: 100%;
+                    margin: 1em 0;
+                }}
+                th, td {{
+                    border: 1px solid {font_color};
+                    padding: 8px;
+                    text-align: left;
+                }}
+                th {{
+                    background-color: {pre_bg_color};  /* 使用与代码块相同的背景色，适应主题 */
+                }}
             </style>
         </head>
         <body>
