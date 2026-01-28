@@ -5,8 +5,11 @@
 - [x] configure theme support for above Widgets
 - [x] setting page
 - [x] poisson_distribution
-- [ ] poisson_theorem
-- [ ] central_limit_theorem
+- [x] lazy loading
+- [x] figure size auto fit
+  - [ ] some bugs left, but it works :laught:
+- [x] poisson_theorem
+- [x] central_limit_theorem
 - [ ] consistency_of_point_estimation
 - [ ] two_types_of_errors
 - [ ] one_dim_norm

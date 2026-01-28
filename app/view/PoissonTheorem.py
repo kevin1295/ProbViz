@@ -1,21 +1,21 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QSizePolicy
+    QWidget, QVBoxLayout, QSizePolicy, QGridLayout
 )
 from qfluentwidgets import (
     FlowLayout, Slider, CompactDoubleSpinBox, CompactSpinBox, isDarkTheme,
-    TitleLabel, BodyLabel, ScrollArea, VBoxLayout
+    TitleLabel, BodyLabel, ScrollArea, FluentStyleSheet
 )
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from scipy.stats import binom, poisson
 import numpy as np
 
-from .ExpWidget import expWidget
+from .ExpWidget import ExpWidget
 from ..common.MarkdownKatex import MarkdownKaTeXWidget
 from ..common.config import cfg
 
-class PoissonTheorem(expWidget):
+class PoissonTheorem(ExpWidget):
     
     desc = r"""
 # 泊松定理
@@ -29,12 +29,14 @@ $$
 则其成功次数 $X$ 就近似地服从参数为 $\lambda = n p$ 的泊松分布。
 """
     
-    class ExpInterface(QWidget):
+    class ExpInterface(ScrollArea):
+        windowResizeSignal = pyqtSignal(int, int)
+        
         class PlotWidget(QWidget):
             def __init__(self, parent=None):
                 super().__init__(parent)
                 
-                self.figure = Figure(figsize=(6, 4), dpi=100)
+                self.figure = Figure(figsize=(8, 6), dpi=100)
                 self.figure.patch.set_facecolor("none")
                 self.figure.patch.set_edgecolor("none")
                 self.canvas = FigureCanvas(self.figure)
@@ -49,7 +51,17 @@ $$
                 self.lambda_ = 20
                 
                 self.update_plot(self.n, self.lambda_)
+                self.parent().windowResizeSignal.connect(self.onParentResize)
                 
+            def onParentResize(self, parent_width, parent_height):
+                available_width = max(parent_width - 100, 400)
+                max_width = 800
+                width = min(available_width, max_width)
+                height = width * 3 / 4  # 3:4 宽高比
+                
+                self.figure.set_size_inches(width / 100, height / 100)
+                self.canvas.draw()
+            
             def update_plot(self, n=None, lambda_=None):
                 if n is None:
                     n = self.n
@@ -64,18 +76,20 @@ $$
                 pmf_binom = binom.pmf(x, n, p)
                 pmf_poisson = poisson.pmf(x, lambda_)
                 
-                ax.bar(x, pmf_binom, width=0.4, label='二项分布', alpha=0.6, color='blue', align='center')
-                ax.bar(x, pmf_poisson, width=0.4, label='泊松分布', alpha=0.6, color='red', align='center')
+                ax.bar(x, pmf_binom, width=0.4, label=f'二项分布 $B(n={n}, p={p:.3f})$', alpha=0.6, color='blue', align='center')
+                ax.bar(x, pmf_poisson, width=0.4, label=f'泊松分布 $P(\\lambda={lambda_:.3f})$', alpha=0.6, color='red', align='center')
                 # end core plotting code
                 
                 ax.patch.set_alpha(0.1)
+                ax.legend()
+                
                 if isDarkTheme():
                     for spine in ax.spines.values():
                         spine.set_color('white')
                     ax.tick_params(colors='white', which='both')
                     ax.set_xlabel('$k$', color='white')
                     ax.set_ylabel('$P(X=k)$', color='white')
-                    ax.set_title(f'$B(n={n}, p={p:.3f})$ - $P(\\lambda={lambda_})$', color='white')
+                    ax.set_title(f'泊松定理演示: 二项分布 vs 泊松分布', color='white')
                     ax.grid(True, alpha=0.3)
                 else:
                     for spine in ax.spines.values():
@@ -83,14 +97,18 @@ $$
                     ax.tick_params(colors='black', which='both')
                     ax.set_xlabel('$k$', color='black')
                     ax.set_ylabel('$P(X=k)$', color='black')
-                    ax.set_title(f'$B(n={n}, p={p:.3f})$ - $P(\\lambda={lambda_})$', color='black')
+                    ax.set_title(f'泊松定理演示: 二项分布 vs 泊松分布', color='black')
                     ax.grid(True, alpha=0.7)
                 
                 self.figure.tight_layout()
                 self.canvas.draw()
         def __init__(self, parent=None):
             super().__init__(parent)
-            self.content_layout = FlowLayout(self)
+            self.flow_layout = FlowLayout(self)
+            
+            self.control_container = QWidget()
+            self.control_container.setFixedWidth(400)
+            self.control_layout = QGridLayout(self.control_container)
             
             self.n_label = BodyLabel("n（实验次数）：", self)
             self.n_spin = CompactSpinBox(self)
@@ -101,15 +119,9 @@ $$
             self.n_slider.setSingleStep(1)
             self.n_slider.setValue(200)
             
-            self.n_layout = QHBoxLayout()
-            self.n_layout.addWidget(self.n_label)
-            self.n_layout.addWidget(self.n_spin)
-            self.n_layout.addWidget(self.n_slider)
-            self.n_layout.setSpacing(10)
-            self.n_widget = QWidget(self)
-            self.n_widget.setLayout(self.n_layout)
-            
-            self.content_layout.addWidget(self.n_widget)
+            self.control_layout.addWidget(self.n_label, 0, 0)
+            self.control_layout.addWidget(self.n_spin, 0, 1)
+            self.control_layout.addWidget(self.n_slider, 0, 2)
             
             self.lambda_label = BodyLabel("λ（泊松参数）：", self)
             self.lambda_spin = CompactDoubleSpinBox(self)
@@ -121,16 +133,16 @@ $$
             self.lambda_slider.setSingleStep(1)
             self.lambda_slider.setValue(2000)
 
-            self.lambda_layout = QHBoxLayout()
-            self.lambda_layout.addWidget(self.lambda_label)
-            self.lambda_layout.addWidget(self.lambda_spin)
-            self.lambda_layout.addWidget(self.lambda_slider)
-            self.lambda_layout.setSpacing(10)
-            self.lambda_widget = QWidget(self)
-            self.lambda_widget.setLayout(self.lambda_layout)
+            self.control_layout.addWidget(self.lambda_label, 1, 0)
+            self.control_layout.addWidget(self.lambda_spin, 1, 1)
+            self.control_layout.addWidget(self.lambda_slider, 1, 2)
+            
+            self.flow_layout.addWidget(self.control_container)
 
-            self.content_layout.addWidget(self.lambda_widget)
-
+            # 绘图区域
+            self.plot_widget = self.PlotWidget(self)
+            self.flow_layout.addWidget(self.plot_widget)
+            
             # 同步 slider 和 spinbox
             self.n_spin.valueChanged.connect(self.n_slider.setValue)
             self.n_slider.valueChanged.connect(self.n_spin.setValue)
@@ -141,22 +153,38 @@ $$
                 lambda: self.lambda_spin.setValue(self.lambda_slider.value() / 100)
             )
 
-            # 绘图区域
-            self.plot_widget = self.PlotWidget(self)
-            self.content_layout.addWidget(self.plot_widget)
-            
             # 连接信号更新图表
             self.n_spin.valueChanged.connect(lambda: self.plot_widget.update_plot(n=self.n_spin.value(), lambda_=self.lambda_spin.value()))
             self.lambda_spin.valueChanged.connect(lambda: self.plot_widget.update_plot(n=self.n_spin.value(), lambda_=self.lambda_spin.value()))
             
             cfg.themeChanged.connect(lambda: self.plot_widget.update_plot(self.n_spin.value(), self.lambda_spin.value()))
             
+        def resizeEvent(self, event):
+            super().resizeEvent(event)
+            current_size = event.size()
+            self.windowResizeSignal.emit(current_size.width(), current_size.height())
+            event.accept()
+        
     def __init__(self, parent=None):
-        
-        descriptionInterface = MarkdownKaTeXWidget(parent=None)
-        descriptionInterface.set_markdown(self.desc)
-        
-        experimentInterface = self.ExpInterface(parent=None)
+        # 创建工厂函数用于懒加载
+        def create_description_interface():
+            descriptionInterface = MarkdownKaTeXWidget()
+            descriptionInterface.set_markdown(self.desc)
+            return descriptionInterface
 
-        super().__init__('泊松定理', descriptionInterface=descriptionInterface, experimentInterface=experimentInterface, parent=parent)
-        # descriptionInterface.setParent(self)
+        def create_experiment_interface():
+            scroll_area = ScrollArea()
+            experimentInterface = self.ExpInterface()
+            scroll_area.setWidget(experimentInterface)
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            FluentStyleSheet.NAVIGATION_INTERFACE.apply(scroll_area)
+            return scroll_area
+
+        super().__init__(
+            '泊松定理',
+            descriptionFactory=create_description_interface,
+            experimentFactory=create_experiment_interface,
+            parent=parent
+        )

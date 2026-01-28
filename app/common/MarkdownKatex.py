@@ -4,24 +4,24 @@ from PyQt5.QtCore import QUrl, QFileInfo
 from PyQt5.QtGui import QColor
 import markdown
 import os
-# 新增：导入PyQt-Fluent-Widgets的主题工具
-from qfluentwidgets import isDarkTheme, qconfig
+from qfluentwidgets import isDarkTheme
+from ..common.config import cfg
 
 class MarkdownKaTeXWidget(QWidget):
     """继承QWidget的离线Markdown+KaTeX渲染控件（支持透明背景+跟随全局主题+字体大小调整）"""
     def __init__(self, parent=None):
         super().__init__(parent)
         # 字体大小相关配置
-        self._default_font_size = 18  # 默认字体大小
-        self._current_font_size = self._default_font_size  # 当前字体大小
-        self._font_size_step = 2  # 放大/缩小的步长
-        self._font_size_min = 12  # 最小字体大小限制
-        self._font_size_max = 36  # 最大字体大小限制
+        self._default_font_size = 18
+        self._current_font_size = self._default_font_size
+        self._font_size_step = 2
+        self._font_size_min = 12
+        self._font_size_max = 36
         
         # 初始化核心控件和布局
         self._init_ui()
         # 监听全局主题变化信号，触发重新渲染
-        qconfig.themeChanged.connect(self._on_theme_changed)
+        cfg.themeChanged.connect(self._on_theme_changed)
         self._last_markdown_text = "Markdown文本未初始化"
 
     def _init_ui(self):
@@ -36,6 +36,8 @@ class MarkdownKaTeXWidget(QWidget):
         self.web_view.setAutoFillBackground(False)
         
         self.web_view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        
+        # self.web_view.lower()
         
         # 2. 布局
         main_layout = QVBoxLayout(self)
@@ -78,6 +80,8 @@ class MarkdownKaTeXWidget(QWidget):
         
         self.web_view.setHtml(offline_html, QUrl.fromLocalFile(current_dir + "/"))
 
+        # self.web_view.lower()
+        
     def _build_offline_html(self, markdown_html: str) -> str:
         """
         私有方法：构建完整的离线HTML内容（新增：动态字体大小）
@@ -119,6 +123,8 @@ class MarkdownKaTeXWidget(QWidget):
                     margin: 0.8em 0;
                 }}
                 body {{
+                    z-index: -1;
+                    position: relative;
                     font-family: "Microsoft YaHei", Arial, sans-serif;
                     font-size: {self._current_font_size}px;  /* 动态当前字体大小 */
                     padding: 24px;
@@ -170,7 +176,6 @@ class MarkdownKaTeXWidget(QWidget):
         """
         return html_template
     
-    # ---------------------- 新增：字体大小调整公共接口 ----------------------
     def set_font_size(self, font_size: int):
         """
         公共接口：直接设置具体的字体大小（会自动限制在最小/最大值之间）
@@ -194,7 +199,6 @@ class MarkdownKaTeXWidget(QWidget):
         self._current_font_size = self._default_font_size
         self.set_markdown(self._last_markdown_text)
     
-    # ---------------------- 新增：获取当前字体大小的辅助接口 ----------------------
     def get_current_font_size(self) -> int:
         """公共接口：获取当前字体大小"""
         return self._current_font_size
@@ -204,4 +208,10 @@ class MarkdownKaTeXWidget(QWidget):
         return self._default_font_size
     
     def resizeEvent(self, event):
-        return super().resizeEvent(event)
+        result = super().resizeEvent(event)
+        # self.web_view.lower() # 不太管用
+        return result
+    
+    def text(self) -> str:
+        """获取当前Markdown文本内容"""
+        return self._last_markdown_text
