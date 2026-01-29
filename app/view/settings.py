@@ -53,7 +53,7 @@ class SettingsInterface(ScrollArea):
             cfg.dpiScale,
             FluentIcon.ZOOM,
             "界面缩放",
-            "调整控件和字体的大小",
+            "调整控件和字体的大小（重启软件生效）",
             texts=[
                 "100%", "125%", "150%", "175%", "200%",
                 "应用系统设置"
