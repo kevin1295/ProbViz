@@ -116,7 +116,8 @@ class MainWindow(FluentWindow):
             routeKey=key,
             icon=icon,
             text=text,
-            onClick=load_and_show
+            onClick=load_and_show,
+            position=NavigationItemPosition.SCROLL
         )
     def initWindow(self):
         self.resize(900, 700)

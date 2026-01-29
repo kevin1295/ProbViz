@@ -65,7 +65,7 @@ class HomeInterface(QWidget):
         self.bannerLayout = QHBoxLayout(self.banner)
         self.bannerLayout.setContentsMargins(18, 48, 36, 0)
         self.bannerLayout.setSpacing(24)
-        self.bannerIcon = IconWidget(FluentIcon.HOME, self.banner)
+        self.bannerIcon = IconWidget(FluentIcon.HOME_FILL, self.banner)
         self.bannerIcon.setFixedSize(48, 48)
         self.bannerLayout.addWidget(self.bannerIcon)
         self.bannerTitle = TitleLabel("欢迎使用概率分布实验系统", self.banner)
@@ -75,7 +75,10 @@ class HomeInterface(QWidget):
         
         self.view = ScrollArea(self)
         self.view.setObjectName('View')
-        self.flowLayout = FlowLayout(self.view)
+        
+        # 创建中间widget作为ScrollArea的内容载体
+        self.contentWidget = QWidget()
+        self.flowLayout = FlowLayout(self.contentWidget)
         
         self.vBoxLayout = QVBoxLayout(self)
         self.vBoxLayout.setContentsMargins(18, 0, 0, 36)
@@ -89,6 +92,7 @@ class HomeInterface(QWidget):
         self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.view.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.view.setWidgetResizable(True)
+        self.view.setWidget(self.contentWidget)
         
         self.flowLayout.addWidget(HomeCard('二项分布', '二项分布是一种离散概率分布，用于描述在n次独立实验中成功次数的概率。', 'binomial_distribution', 0))
         self.flowLayout.addWidget(HomeCard('泊松分布', '泊松分布是一种离散概率分布，用于描述在单位时间内随机事件发生的次数。', 'poisson_distribution', 1))

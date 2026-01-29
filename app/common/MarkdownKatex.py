@@ -27,7 +27,6 @@ class MarkdownKaTeXWidget(QWidget):
 
     def _init_ui(self):
         """初始化界面布局和内部控件（保留透明背景核心逻辑）"""
-        # 1. 创建QWebEngineView（承载HTML+KaTeX+Markdown）
         self.web_view = QWebEngineView(self)
         self.web_view.setContextMenuPolicy(3)  # 禁用右键菜单
         
@@ -40,13 +39,11 @@ class MarkdownKaTeXWidget(QWidget):
         
         # self.web_view.lower()
         
-        # 2. 布局
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.addWidget(self.web_view)
         self.setLayout(main_layout)
         
-        # 3. 初始化提示文本
         self.set_markdown("请输入Markdown文本")
 
     def _on_theme_changed(self):
@@ -65,16 +62,16 @@ class MarkdownKaTeXWidget(QWidget):
         # 保留：保存最后一次传入的Markdown文本
         self._last_markdown_text = markdown_text
         
-        # 步骤1：Markdown转HTML
+        # Markdown转HTML
         markdown_html = markdown.markdown(
             markdown_text,
             extensions=['extra']
         )
         
-        # 步骤2：构建带主题样式+动态字体大小的离线HTML
+        # 构建带主题样式+动态字体大小的离线HTML
         offline_html = self._build_offline_html(markdown_html)
         
-        # 步骤3：加载HTML
+        # 加载HTML
         current_dir = QFileInfo(__file__).absolutePath()
         
         self.web_view.page().profile().clearHttpCache()
@@ -89,14 +86,14 @@ class MarkdownKaTeXWidget(QWidget):
         :param markdown_html: 解析后的Markdown HTML字符串
         :return: 完整的HTML字符串
         """
-        # 1. KaTeX资源路径处理
+        # KaTeX资源路径处理
         # katex_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "katex")
         katex_dir, _ = get_katex_path()
         katex_css_path = QUrl.fromLocalFile(os.path.join(katex_dir, "katex.min.css")).toString()
         katex_js_path = QUrl.fromLocalFile(os.path.join(katex_dir, "katex.min.js")).toString()
         katex_render_js_path = QUrl.fromLocalFile(os.path.join(katex_dir, "contrib", "auto-render.min.js")).toString()
         
-        # 2. 从全局主题动态判断颜色
+        # 从全局主题动态判断颜色
         if isDarkTheme():
             # 深色主题：白色字体 + 深灰蓝半透明代码块
             font_color = "#ffffff"
@@ -108,7 +105,7 @@ class MarkdownKaTeXWidget(QWidget):
             pre_bg_color = "rgba(245, 245, 245, 0.8)"
             code_bg_color = "rgba(245, 245, 245, 0.8)"
         
-        # 3. HTML模板
+        # HTML模板
         html_template = f"""
         <!DOCTYPE html>
         <html lang="zh-CN">
