@@ -14,6 +14,10 @@ matplotlib.use('Qt5Agg')
 matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans']
 matplotlib.rcParams['axes.unicode_minus'] = False
 
+from app.common.pyinstalltools import setup_qtWebEngine
+
+setup_qtWebEngine()
+
 # # enable dpi scale
 if cfg.get(cfg.dpiScale) == "Auto":
     QApplication.setHighDpiScaleFactorRoundingPolicy(

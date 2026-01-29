@@ -8,7 +8,7 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__)
 
-from .pyinstalltools import get_work_dir
+from .pyinstalltools import get_app_path
 
 def isWin11():
     return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
@@ -23,4 +23,4 @@ class Config(QConfig):
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
-qconfig.load(os.path.join(get_work_dir(), 'app', 'config', 'config.json'), cfg)
+qconfig.load(os.path.join(get_app_path(), 'app', 'config', 'config.json'), cfg)
