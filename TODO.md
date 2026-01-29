@@ -10,11 +10,11 @@
   - [ ] some bugs left, but it works :laught:
 - [x] poisson_theorem
 - [x] central_limit_theorem
-- [ ] consistency_of_point_estimation
-- [ ] two_types_of_errors
-- [ ] one_dim_norm
-- [ ] two_dim_norm
-- [ ] coin_tossing_experiment
-- [ ] continuous_pdf
-- [ ] discrete_pdf
-- [ ] home page
+- [x] consistency_of_point_estimation
+- [x] two_types_of_errors
+- [x] one_dim_norm
+- [x] two_dim_norm
+- [x] coin_tossing_experiment
+- [x] continuous_pdf
+- [x] discrete_pdf
+- [x] home page
