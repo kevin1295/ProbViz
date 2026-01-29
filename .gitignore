@@ -1,3 +1,5 @@
 .venv/
 .venv64/
 __pycache__/
+build/
+dist/

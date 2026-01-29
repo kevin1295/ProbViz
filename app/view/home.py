@@ -57,7 +57,7 @@ class HomeCard(CardWidget):
         signalBus.switchToSampleCard.emit(self.routekey, self.index)
 
 
-class HomeInterface(ScrollArea):
+class HomeInterface(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         
@@ -73,7 +73,7 @@ class HomeInterface(ScrollArea):
         
         self.banner.setObjectName('titleLabel')
         
-        self.view = QWidget(self)
+        self.view = ScrollArea(self)
         self.view.setObjectName('View')
         self.flowLayout = FlowLayout(self.view)
         
@@ -86,8 +86,9 @@ class HomeInterface(ScrollArea):
         self.setObjectName('主页')
         self.setStyleSheet("background-color: rgba(255, 255, 255, 0); border: none;")
         
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setWidgetResizable(True)
+        self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.view.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.view.setWidgetResizable(True)
         
         self.flowLayout.addWidget(HomeCard('二项分布', '二项分布是一种离散概率分布，用于描述在n次独立实验中成功次数的概率。', 'binomial_distribution', 0))
         self.flowLayout.addWidget(HomeCard('泊松分布', '泊松分布是一种离散概率分布，用于描述在单位时间内随机事件发生的次数。', 'poisson_distribution', 1))
@@ -101,4 +102,3 @@ class HomeInterface(ScrollArea):
         self.flowLayout.addWidget(HomeCard('硬币实验', '投掷硬币并统计结果分布与可视化。', 'coin_tossing_experiment', 9))
         self.flowLayout.addWidget(HomeCard('连续随机变量分布', '若干种常见的连续随机变量的分布函数。', 'continuous_pdf', 10))
         self.flowLayout.addWidget(HomeCard('离散随机变量分布', '若干种常见的离散随机变量的分布函数。', 'discrete_pdf', 11))
-        

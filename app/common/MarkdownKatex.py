@@ -5,7 +5,8 @@ from PyQt5.QtGui import QColor
 import markdown
 import os
 from qfluentwidgets import isDarkTheme
-from ..common.config import cfg
+from .pyinstalltools import get_katex_path
+from .config import cfg
 
 class MarkdownKaTeXWidget(QWidget):
     """继承QWidget的离线Markdown+KaTeX渲染控件（支持透明背景+跟随全局主题+字体大小调整）"""
@@ -89,7 +90,8 @@ class MarkdownKaTeXWidget(QWidget):
         :return: 完整的HTML字符串
         """
         # 1. KaTeX资源路径处理
-        katex_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "katex")
+        # katex_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "katex")
+        katex_dir, _ = get_katex_path()
         katex_css_path = QUrl.fromLocalFile(os.path.join(katex_dir, "katex.min.css")).toString()
         katex_js_path = QUrl.fromLocalFile(os.path.join(katex_dir, "katex.min.js")).toString()
         katex_render_js_path = QUrl.fromLocalFile(os.path.join(katex_dir, "contrib", "auto-render.min.js")).toString()

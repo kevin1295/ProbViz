@@ -81,6 +81,7 @@ $$
                 axes = []
                 for i in range(len(sample_sizes)):
                     ax = self.figure.add_subplot(len(sample_sizes), 1, i+1)
+                    ax.patch.set_alpha(0.1)
                     axes.append(ax)
                 
                 x_range = 6 * sigma

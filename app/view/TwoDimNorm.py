@@ -108,7 +108,9 @@ $(X, Y) \sim \mathcal{N}(\mu_1, \mu_2, \sigma_1, \sigma_2, \rho)$
                 
                 # end core plotting code
                 
-                self.ax.patch.set_alpha(0.1)
+                self.ax.patch.set_alpha(0)
+                cb = self.figure.colorbar(surf, shrink=0.5, aspect=5)
+                
                 if isDarkTheme():
                     self.ax.xaxis.pane.fill = False
                     self.ax.yaxis.pane.fill = False
@@ -125,6 +127,11 @@ $(X, Y) \sim \mathcal{N}(\mu_1, \mu_2, \sigma_1, \sigma_2, \rho)$
                     self.ax.set_ylabel('$Y$', color='white')
                     self.ax.set_zlabel('$f(X,Y)$', color='white')
                     self.ax.set_title(f'二维正态分布 $N(\\mu_1={self.mu1:.2f}, \\mu_2={self.mu2:.2f}, \\sigma_1^2={self.sigma1**2:.2f}, \\sigma_2^2={self.sigma2**2:.2f}, \\rho={self.rho:.2f})$', color='white')
+                
+                    cb.ax.yaxis.set_tick_params(color='white')
+                    cb.outline.set_edgecolor('white')
+                    for text in cb.ax.get_yticklabels():
+                        text.set_color('white')
                 else:
                     self.ax.xaxis.pane.fill = False
                     self.ax.yaxis.pane.fill = False
@@ -142,8 +149,10 @@ $(X, Y) \sim \mathcal{N}(\mu_1, \mu_2, \sigma_1, \sigma_2, \rho)$
                     self.ax.set_zlabel('$f(X,Y)$', color='black')
                     self.ax.set_title(f'二维正态分布 $N(\\mu_1={self.mu1:.2f}, \\mu_2={self.mu2:.2f}, \\sigma_1^2={self.sigma1**2:.2f}, \\sigma_2^2={self.sigma2**2:.2f}, \\rho={self.rho:.2f})$', color='black')
                 
-                # Add colorbar
-                self.figure.colorbar(surf, shrink=0.5, aspect=5)
+                    cb.ax.yaxis.set_tick_params(color='black')
+                    cb.outline.set_edgecolor('black')
+                    for text in cb.ax.get_yticklabels():
+                        text.set_color('black')
                 
                 self.figure.tight_layout()
                 self.canvas.draw()
