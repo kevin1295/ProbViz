@@ -7,7 +7,7 @@
 - [x] poisson_distribution
 - [x] lazy loading
 - [x] figure size auto fit
-  - [ ] some bugs left, but it works :laught:
+  - [ ] some bugs left, but it works :smile:
 - [x] poisson_theorem
 - [x] central_limit_theorem
 - [x] consistency_of_point_estimation
